@@ -222,7 +222,8 @@ Fine tuning of the installation directories:
   --datarootdir=DIR       read-only arch.-independent data root [PREFIX/share]
   --datadir=DIR           read-only architecture-independent data [DATAROOTDIR]
   --infodir=DIR           info documentation [DATAROOTDIR/info]
-  --docdir=DIR            documentation root [DATAROOTDIR/doc/jupiter]
+  --mandir=DIR            man documentation [DATAROOTDIR/man]
+  --docdir=DIR            documentation root [DATAROOTDIR/doc/${PACKAGE_NAME}]
   --commonlispdir=DIR     Common Lisp source files [DATAROOTDIR/common-lisp/source]
 
 EOF
@@ -309,6 +310,14 @@ if lc_gzip="$(command -v gzip)"; then
     echo "$lc_gzip"
 else
     echo "no"
+fi
+
+echo "Checking for ocicl... \c"
+if lc_ocicl="$(command -v ocicl)"; then
+    echo "$lc_ocicl"
+else
+    printf "\nRequired 'ocicl' not found\n"
+    exit 1
 fi
 
 echo "Checking for CL compiler... \c"
