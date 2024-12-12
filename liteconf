@@ -1,0 +1,80 @@
+#!/bin/bash
+
+# helpers
+
+# meta
+version=0.1.0
+name=litconf
+
+assert_value ()
+{
+    if [ -z "$2" ] || [ "${2:0:1}" = "-" ]; then
+        echo "Error: Argument for 0.1.0 is missing" >&2
+        exit 1
+    fi
+}
+
+usage ()
+{
+    cat <<EOF
+Usage: $(basename $0) [options]
+
+Options:
+  -f, --force                            Force creation of new files.
+  -v, --version                          Show version.
+  -h, --help                             Show help.
+EOF
+}
+
+# Parsing args
+params=""
+force=
+while (( "$#" )); do
+    case "$1" in
+        -f|--force)
+            force=t
+            shift
+            ;;
+        -v|--version)
+            echo "$(basename $0) v$version"
+            exit 0
+            ;;
+        -h|--help)
+            usage
+            exit 0
+            ;;
+        -*|--*)
+            echo "Error: Unsupported flag $1" >&2
+            exit 1
+            ;;
+        *)
+            params+="$1 "
+            shift
+            ;;
+    esac
+done
+# set positional arguments in their proper place
+eval set -- "$params"
+
+kind="$1"
+dest="$PWD"
+
+if [[ -z "$kind" ]]
+then
+    echo "Please specify an archetype"
+    exit 1
+fi
+
+template_dir="$HOME/.local/share/liteconf"
+configure="${template_dir}/configure"
+makefile="${template_dir}/${kind}.makefile"
+
+if [[ ! -e "${dest}/configure" || -n "$force" ]]
+then
+    cp "$configure" "${dest}/configure"
+fi
+
+if [[ ! -e "${dest}/Makefile" || -n "$force" ]]
+then
+    cp "$makefile" "${dest}/Makefile"
+fi
